@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:favorite_places/providers/user_places.dart';
+import 'package:favorite_places/widgets/image_input.dart';
 
 class AddNewPlace extends ConsumerStatefulWidget {
   const AddNewPlace({super.key});
@@ -39,6 +40,8 @@ class _AddNewPlaceState extends ConsumerState<AddNewPlace> {
             decoration: InputDecoration(labelText: 'Título'),
             controller: _titleController,
           ),
+          const SizedBox(height: 16),
+          const ImageInput(),
           SizedBox(height: 16),
           ElevatedButton.icon(
             icon: const Icon(Icons.add),
