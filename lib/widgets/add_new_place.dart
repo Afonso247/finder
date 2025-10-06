@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddNewPlace extends StatefulWidget {
+import 'package:favorite_places/providers/user_places.dart';
+
+class AddNewPlace extends ConsumerStatefulWidget {
   const AddNewPlace({super.key});
 
   @override
-  State<AddNewPlace> createState() => _AddNewPlaceState();
+  ConsumerState<AddNewPlace> createState() => _AddNewPlaceState();
 }
 
-class _AddNewPlaceState extends State<AddNewPlace> {
+class _AddNewPlaceState extends ConsumerState<AddNewPlace> {
   final _titleController = TextEditingController();
+
+  void _addPlace() {
+    final enteredTitle = _titleController.text;
+    if (enteredTitle.isEmpty) {
+      return;
+    }
+
+    ref.read(userPlacesProvider.notifier).addPlace(enteredTitle);
+    Navigator.of(context).pop();
+  }
 
   @override
   void dispose() {
@@ -30,7 +43,7 @@ class _AddNewPlaceState extends State<AddNewPlace> {
           ElevatedButton.icon(
             icon: const Icon(Icons.add),
             label: const Text('Adicionar'),
-            onPressed: () {},
+            onPressed: _addPlace,
           ),
         ],
       ),

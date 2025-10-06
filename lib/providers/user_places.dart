@@ -6,11 +6,10 @@ class UserPlacesNotifier extends Notifier<List<Place>> {
   UserPlacesNotifier() : super();
 
   @override
-  List<Place> build() {
-    return state;
-  }
+  List<Place> build() => [];
 
-  void addPlace(Place place) {
+  void addPlace(String title) {
+    final place = Place(title: title);
     state = [place, ...state];
   }
 }
