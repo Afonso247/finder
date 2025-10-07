@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 
 class LocationInput extends StatefulWidget {
   const LocationInput({super.key});
@@ -8,8 +9,57 @@ class LocationInput extends StatefulWidget {
 }
 
 class _LocationInputState extends State<LocationInput> {
+  Location? _pickedLocation;
+  bool _isGettingLocation = false;
+
+  void _getCurrentLocation() async {
+    Location location = Location();
+
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+    LocationData locationData;
+
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    setState(() {
+      _isGettingLocation = true;
+    });
+
+    locationData = await location.getLocation();
+
+    setState(() {
+      _isGettingLocation = false;
+    });
+
+    debugPrint(locationData.latitude?.toStringAsFixed(2));
+    debugPrint(locationData.longitude?.toStringAsFixed(2));
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget previewContent = const Text(
+      'Localização não definida',
+      textAlign: TextAlign.center,
+    );
+
+    if (_isGettingLocation) {
+      previewContent = const CircularProgressIndicator();
+    }
+
     return Column(
       children: [
         Container(
@@ -19,10 +69,7 @@ class _LocationInputState extends State<LocationInput> {
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: Colors.grey),
           ),
-          child: const Text(
-            'Localização não definida',
-            textAlign: TextAlign.center,
-          ),
+          child: previewContent,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -30,7 +77,7 @@ class _LocationInputState extends State<LocationInput> {
             TextButton.icon(
               icon: const Icon(Icons.location_on),
               label: const Text('Obter localização atual'),
-              onPressed: () {},
+              onPressed: _getCurrentLocation,
             ),
             TextButton.icon(
               icon: const Icon(Icons.map),
