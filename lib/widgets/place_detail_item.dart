@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:favorite_places/models/place.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:favorite_places/screens/map.dart';
 
 class PlaceDetailItem extends StatelessWidget {
   const PlaceDetailItem({super.key, required this.place});
@@ -18,20 +19,28 @@ class PlaceDetailItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Image.file(
-          place.image,
-          fit: BoxFit.cover,
-          width: double.infinity,
-        ),
+        Image.file(place.image, fit: BoxFit.cover, width: double.infinity),
         Positioned(
           bottom: 5,
           left: 0,
           right: 0,
           child: Column(
             children: [
-              CircleAvatar(
-                radius: 70,
-                backgroundImage: NetworkImage(locationImage),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => MapScreen(
+                        isSelecting: false,
+                        location: place.location,
+                      ),
+                    ),
+                  );
+                },
+                child: CircleAvatar(
+                  radius: 70,
+                  backgroundImage: NetworkImage(locationImage),
+                ),
               ),
               Container(
                 alignment: Alignment.center,

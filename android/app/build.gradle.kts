@@ -20,29 +20,25 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.favorite_places"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // Carrega a chave do local.properties
-        def localProperties = new Properties()
-        def localPropertiesFile = rootProject.file('local.properties')
-        if (localPropertiesFile.exists()) {
-            localPropertiesFile.withReader('UTF-8') { reader ->
-                localProperties.load(reader)
+        
+        // Carrega a chave do arquivo .env
+        val envFile = rootProject.file("../../.env")
+        var googleMapsApiKey = ""
+        
+        if (envFile.exists()) {
+            envFile.forEachLine { line ->
+                if (line.startsWith("GOOGLE_MAPS_API_KEY=")) {
+                    googleMapsApiKey = line.substring("GOOGLE_MAPS_API_KEY=".length).trim()
+                }
             }
         }
         
-        def googleMapsApiKey = localProperties.getProperty('GOOGLE_MAPS_API_KEY')
-        if (googleMapsApiKey == null) {
-            googleMapsApiKey = ""
-        }
-        
-        manifestPlaceholders = [GOOGLE_MAPS_API_KEY: googleMapsApiKey]
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = googleMapsApiKey
     }
 
     buildTypes {
