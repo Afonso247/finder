@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatefulWidget {
-  const ImageInput({super.key});
+  const ImageInput({super.key, required this.onPickImage});
+
+  final void Function(File image) onPickImage;
 
   @override
   State<ImageInput> createState() => _ImageInputState();
@@ -25,19 +27,21 @@ class _ImageInputState extends State<ImageInput> {
       setState(() {
         _selectedImage = File(pickedImage.path);
       });
+
+      widget.onPickImage(_selectedImage!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     Widget content = TextButton.icon(
-        icon: const Icon(Icons.camera),
-        label: const Text('Adicionar Imagem'),
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        onPressed: _pickImage,
-      );
+      icon: const Icon(Icons.camera),
+      label: const Text('Adicionar Imagem'),
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      onPressed: _pickImage,
+    );
 
     if (_selectedImage != null) {
       content = GestureDetector(
