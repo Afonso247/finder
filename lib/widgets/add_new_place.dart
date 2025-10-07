@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:favorite_places/providers/user_places.dart';
-import 'package:favorite_places/widgets/image_input.dart';
+import 'package:favorite_places/widgets/inputs/image_input.dart';
+import 'package:favorite_places/widgets/inputs/location_input.dart';
 
 class AddNewPlace extends ConsumerStatefulWidget {
   const AddNewPlace({super.key});
@@ -44,7 +45,9 @@ class _AddNewPlaceState extends ConsumerState<AddNewPlace> {
           ),
           const SizedBox(height: 16),
           ImageInput(onPickImage: (image) => _pickedImage = image),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
+          LocationInput(),
+          const SizedBox(height: 16),
           ElevatedButton.icon(
             icon: const Icon(Icons.add),
             label: const Text('Adicionar'),
