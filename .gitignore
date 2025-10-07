@@ -12,6 +12,9 @@
 .swiftpm/
 migrate_working_dir/
 
+# iOS
+**/ios/Runner/Secrets.plist
+
 # API Keys
 
 .env

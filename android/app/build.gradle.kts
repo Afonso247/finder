@@ -28,6 +28,21 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Carrega a chave do local.properties
+        def localProperties = new Properties()
+        def localPropertiesFile = rootProject.file('local.properties')
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.withReader('UTF-8') { reader ->
+                localProperties.load(reader)
+            }
+        }
+        
+        def googleMapsApiKey = localProperties.getProperty('GOOGLE_MAPS_API_KEY')
+        if (googleMapsApiKey == null) {
+            googleMapsApiKey = ""
+        }
+        
+        manifestPlaceholders = [GOOGLE_MAPS_API_KEY: googleMapsApiKey]
     }
 
     buildTypes {
