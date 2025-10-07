@@ -1,8 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+
+import 'package:favorite_places/models/place.dart';
 
 class LocationInput extends StatefulWidget {
   const LocationInput({super.key});
@@ -12,7 +15,7 @@ class LocationInput extends StatefulWidget {
 }
 
 class _LocationInputState extends State<LocationInput> {
-  Location? _pickedLocation;
+  PlaceLocation? _pickedLocation;
   bool _isGettingLocation = false;
 
   void _getCurrentLocation() async {
@@ -43,18 +46,28 @@ class _LocationInputState extends State<LocationInput> {
     });
 
     locationData = await location.getLocation();
+    final lat = locationData.latitude;
+    final lng = locationData.longitude;
+
+    if (lat == null || lng == null) {
+      return;
+    }
 
     final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
     final url = Uri.parse(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=${locationData.latitude},${locationData.longitude}&key=${apiKey}',
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}',
     );
 
     final response = await http.get(url);
     final resBody = json.decode(response.body);
     final address = resBody['results'][0]['formatted_address'];
-    debugPrint(address);
 
     setState(() {
+      _pickedLocation = PlaceLocation(
+        latitude: lat,
+        longitude: lng,
+        address: address,
+      );
       _isGettingLocation = false;
     });
   }
