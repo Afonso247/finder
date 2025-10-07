@@ -8,15 +8,28 @@ import 'package:http/http.dart' as http;
 import 'package:favorite_places/models/place.dart';
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({super.key});
+  const LocationInput({super.key, required this.onPickLocation});
+
+  final void Function(PlaceLocation location) onPickLocation;
 
   @override
   State<LocationInput> createState() => _LocationInputState();
 }
 
 class _LocationInputState extends State<LocationInput> {
+  final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
+
   PlaceLocation? _pickedLocation;
   bool _isGettingLocation = false;
+
+  String get locationPreview {
+    if (_pickedLocation == null) {
+      return '';
+    }
+    final lat = _pickedLocation!.latitude;
+    final lng = _pickedLocation!.longitude;
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=16&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&key=${apiKey}';
+  }
 
   void _getCurrentLocation() async {
     Location location = Location();
@@ -53,7 +66,6 @@ class _LocationInputState extends State<LocationInput> {
       return;
     }
 
-    final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
     final url = Uri.parse(
       'https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}',
     );
@@ -70,6 +82,8 @@ class _LocationInputState extends State<LocationInput> {
       );
       _isGettingLocation = false;
     });
+
+    widget.onPickLocation(_pickedLocation!);
   }
 
   @override
@@ -78,6 +92,15 @@ class _LocationInputState extends State<LocationInput> {
       'Localização não definida',
       textAlign: TextAlign.center,
     );
+
+    if (_pickedLocation != null) {
+      previewContent = Image.network(
+        locationPreview,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 250,
+      );
+    }
 
     if (_isGettingLocation) {
       previewContent = const CircularProgressIndicator();
